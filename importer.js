@@ -1,9 +1,8 @@
 #!/usr/bin/env node
 
 /**
- * Command line utility to import an array of
- * of JSON objects and push each one into any
- * endpoint of an HTTP API.
+ * Command line utility to import JSON objects
+ * and push each one into any endpoint of an HTTP API.
  *
  * @author nfantone
  */
@@ -13,7 +12,7 @@ var winston = require('winston');
 var argv = require('yargs')
   .usage('Usage: $0 [-X method] <url> [options]')
   .demand(['data'])
-  .describe('data', 'Path to .json data file')
+  .describe('data', 'Path to .json file or inline JSON data')
   .nargs('data', 1)
   .alias('d', 'data')
   .describe('X', 'Specify request method to use')
@@ -22,11 +21,13 @@ var argv = require('yargs')
   .array('H')
   .count('verbose')
   .alias('v', 'verbose')
+  .describe('v', 'Sets the verbosity level for log messages')
   .help('h')
   .alias('h', 'help')
   .version(function() {
-    return require('../package').version;
+    return require('./package').version;
   })
+  .alias('V', 'version')
   .epilog('https://github.com/nfantone').argv;
 
 argv.verbose = Math.min(argv.verbose + winston.config.cli.levels.info, winston.config.cli.levels.silly);
@@ -64,20 +65,27 @@ function exit() {
 
 // Validate URL positional argument
 if (!url.isWebUri(apiEndpointUrl)) {
-  log.error('Invalid URL provided: %s', apiEndpointUrl);
+  log.error('Invalid or no URL provided: <%s>', apiEndpointUrl);
   exit();
 }
 
 // Fetch data from json file
 try {
   data = require(argv.data);
-  data = util.isArray(data) ? data : [data];
   log.info('Loaded file [%s]', path.resolve(argv.data));
-  log.debug('Found %s data entries', data.length);
 } catch (e) {
-  log.error('File not found [%s]', argv.data);
-  exit();
+  log.verbose('File not found [%s]', argv.data);
+  try {
+    // Not a file, try inlined data
+    data = JSON.parse(argv.data);
+  } catch (r) {
+    log.error('Failed to parse inline data: %s', r.message);
+    exit();
+  }
 }
+
+log.debug('Found %s data entries', data.length);
+data = util.isArray(data) ? data : [data];
 
 // Generate headers object
 if (argv.H) {
