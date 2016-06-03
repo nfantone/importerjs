@@ -31,7 +31,7 @@
     "request": "^2.72.0",
     "shortid": "^2.2.6",
     "valid-url": "^1.0.9",
-    "winston": "^2.2.0",
+    "winston": "^2.1.1",
     "yargs": "^4.7.1"
   },
   "devDependencies": {

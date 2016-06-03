@@ -15,6 +15,11 @@ var argv = require('yargs')
   .describe('data', 'Path to .json file or inline JSON data')
   .nargs('data', 1)
   .alias('d', 'data')
+  .describe('count', 'Max number of request to send')
+  .alias('count', 'c')
+  .describe('skip', 'Number of ignored entries in the data array (starting from 0)')
+  .alias('skip', 's')
+  .default('skip', 0)
   .describe('X', 'Specify request method to use')
   .default('X', 'POST')
   .describe('H', 'Pass custom header to server')
@@ -89,17 +94,21 @@ data = util.isArray(data) ? data : [data];
 
 // Generate headers object
 if (argv.H) {
-  for (var i = argv.H.length - 1; i >= 0; i--) {
+  for (let i = argv.H.length - 1; i >= 0; i--) {
     var h = argv.H[i].split(/\s*:\s*/);
     headers[h[0]] = h[1];
   }
 }
 
+// Set number of request to perform (equals length of data array, by default)
+argv.count = argv.count || data.length;
+
 // Make requests to endpoint
-data.forEach(function(d, i) {
-  var reqId = shortid.generate();
+for (let j = argv.skip; j < argv.count; j++) {
+  let reqId = shortid.generate();
+  let d = data[j];
   requests.push(function(cb) {
-    log.info('{req-%s} [%s] %s [%s/%s]', reqId, argv.X, apiEndpointUrl, i + 1, data.length);
+    log.info('{req-%s} [%s] %s [%s/%s]', reqId, argv.X, apiEndpointUrl, j + 1, argv.count);
     log.verbose('{req-%s} Request body: %s', reqId, JSON.stringify(d));
     request({
       method: argv.X,
@@ -121,7 +130,7 @@ data.forEach(function(d, i) {
       return cb(err);
     });
   });
-});
+}
 
 // Wait for requests to complete
 async.parallel(requests, function(err) {
