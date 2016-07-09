@@ -28,7 +28,7 @@
     "async": "^2.0.0-rc.5",
     "lodash.invert": "^4.1.1",
     "moment": "^2.13.0",
-    "request": "^2.72.0",
+    "request": "^2.73.0",
     "shortid": "^2.2.6",
     "valid-url": "^1.0.9",
     "winston": "^2.1.1",
