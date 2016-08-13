@@ -26,7 +26,7 @@
   "homepage": "https://github.com/nfantone/importerjs#readme",
   "dependencies": {
     "async": "^2.0.0-rc.5",
-    "lodash.invert": "^4.1.1",
+    "lodash.invert": "^4.3.0",
     "moment": "^2.13.0",
     "request": "^2.73.0",
     "shortid": "^2.2.6",
