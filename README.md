@@ -1,5 +1,7 @@
 # importerjs
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/nfantone/importerjs.svg)](https://greenkeeper.io/)
+
 Command line utility to push bulks of JSON objects to an external or local API via HTTP requests. Like `curl`, but bulkier.
 
 [![js-semistandard-style](https://cdn.rawgit.com/flet/semistandard/master/badge.svg)](https://github.com/Flet/semistandard)
